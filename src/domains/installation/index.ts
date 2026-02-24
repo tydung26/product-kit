@@ -5,7 +5,7 @@ import { resolveTargetPaths } from './resolve-paths';
 import { copyCommandFile } from './copy-skill-files';
 import { addManifestEntry, removeManifestEntries, getManifestEntries } from './manifest-manager';
 import { log } from '../../shared/logger';
-import type { InstallOptions } from '../../types';
+import type { InstallOptions, ToolName } from '../../types';
 
 // Read current package version for manifest tracking
 function getPkgVersion(): string {
@@ -71,9 +71,37 @@ export async function removeSkills(names: string[]): Promise<void> {
   }
 }
 
-// Update = reinstall with force, comparing pkg version
-export async function updateSkills(names: string[], opts: InstallOptions): Promise<void> {
-  await installSkills(names, { ...opts, force: true });
+// Update skills using manifest-recorded tools (not blindly 'all').
+// When --tool is explicitly passed, use that override instead.
+export async function updateSkills(names: string[], opts: InstallOptions & { toolOverride?: boolean }): Promise<void> {
+  // If user explicitly passed --tool, use it directly
+  if (opts.toolOverride) {
+    await installSkills(names, { ...opts, force: true });
+    return;
+  }
+
+  // Derive tools from manifest entries per skill
+  const entries = getManifestEntries().filter(e => names.includes(e.name));
+  if (entries.length === 0) {
+    log.warn('No matching manifest entries to update.');
+    return;
+  }
+
+  // Group by tool to batch reinstalls
+  const byTool = new Map<string, string[]>();
+  for (const entry of entries) {
+    if (!byTool.has(entry.tool)) byTool.set(entry.tool, []);
+    const skillNames = byTool.get(entry.tool)!;
+    if (!skillNames.includes(entry.name)) skillNames.push(entry.name);
+  }
+
+  for (const [tool, skillNames] of byTool) {
+    await installSkills(skillNames, {
+      ...opts,
+      tools: tool as ToolName,
+      force: true,
+    });
+  }
 }
 
 export { getManifestEntries };

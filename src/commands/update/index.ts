@@ -28,6 +28,7 @@ export function registerUpdate(cli: CAC) {
         tools: opts.tool ?? 'all',
         scope: opts.scope as InstallScope,
         force: true,
+        toolOverride: !!opts.tool,
       });
 
       outro('Skills updated.');
