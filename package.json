@@ -1,0 +1,50 @@
+{
+  "name": "product-kit",
+  "version": "0.1.0",
+  "description": "PM skills for Claude Code, Antigravity, and OpenCode",
+  "bin": {
+    "pkit": "bin/pkit.js"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "lint": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "prepublishOnly": "npm run lint && npm run build && npm test"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/",
+    "skills/",
+    "bin/",
+    "README.md"
+  ],
+  "keywords": [
+    "product-management",
+    "ai",
+    "claude",
+    "antigravity",
+    "opencode",
+    "skills",
+    "pm",
+    "pkit"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^1.0.1",
+    "cac": "^6.7.14",
+    "chalk": "^5.6.2",
+    "fs-extra": "^11.3.3",
+    "ora": "^9.3.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^25.3.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
