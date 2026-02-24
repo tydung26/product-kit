@@ -1,35 +1,38 @@
 import { readdirSync, readFileSync, existsSync } from 'fs';
-import { join } from 'path';
-import { PACKAGE_SKILLS_DIR } from '../../shared/paths';
+import { join, basename } from 'path';
+import { PACKAGE_COMMANDS_DIR } from '../../shared/paths';
 import { validateSkillContent } from './skill-validator';
 import type { Skill } from '../../types';
 
-// Loads all skills from the bundled skills/ directory
+// Derives the slash-command name from a filename: "brainstorm.md" → "pkit:brainstorm"
+function fileNameToCommandName(filename: string): string {
+  return `pkit:${basename(filename, '.md')}`;
+}
+
+// Loads all commands from the bundled commands/pkit/ directory
 export function loadAvailableSkills(): Skill[] {
-  if (!existsSync(PACKAGE_SKILLS_DIR)) return [];
+  if (!existsSync(PACKAGE_COMMANDS_DIR)) return [];
 
   const skills: Skill[] = [];
-  const entries = readdirSync(PACKAGE_SKILLS_DIR, { withFileTypes: true });
+  const entries = readdirSync(PACKAGE_COMMANDS_DIR, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
-    const skillDir = join(PACKAGE_SKILLS_DIR, entry.name);
-    const skillFile = join(skillDir, 'SKILL.md');
-    if (!existsSync(skillFile)) continue;
+    if (!entry.isFile() || !entry.name.endsWith('.md')) continue;
+    const filePath = join(PACKAGE_COMMANDS_DIR, entry.name);
 
     try {
-      const content = readFileSync(skillFile, 'utf8');
-      const meta = validateSkillContent(content, skillFile);
-      skills.push({ name: entry.name, dirPath: skillDir, meta });
+      const content = readFileSync(filePath, 'utf8');
+      const meta = validateSkillContent(content, filePath);
+      skills.push({ name: fileNameToCommandName(entry.name), filePath, meta });
     } catch {
-      // Skip invalid skills silently in production
+      // Skip invalid command files silently in production
     }
   }
 
   return skills;
 }
 
-// Find a single skill by name (directory name)
+// Find a single command by name (e.g. "pkit:brainstorm")
 export function findSkillByName(name: string): Skill | undefined {
   return loadAvailableSkills().find(s => s.name === name);
 }
