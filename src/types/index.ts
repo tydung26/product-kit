@@ -4,17 +4,16 @@ export type ToolName = 'claude' | 'antigravity' | 'opencode' | 'all';
 // Installation scope: user-global or current project
 export type InstallScope = 'global' | 'project';
 
-// Parsed SKILL.md frontmatter
+// Parsed command .md frontmatter
 export interface SkillMeta {
-  name: string;
   description: string;
-  license?: string;
+  argumentHint?: string;
 }
 
-// A skill found in the package's skills/ directory
+// A command found in the package's commands/pkit/ directory
 export interface Skill {
-  name: string;       // e.g. "pkit:brainstorm"
-  dirPath: string;    // absolute path to skill directory
+  name: string;       // e.g. "pkit:brainstorm" (derived from filename)
+  filePath: string;   // absolute path to the .md file
   meta: SkillMeta;
 }
 
@@ -26,7 +25,7 @@ export interface InstallOptions {
   yes?: boolean;      // skip interactive prompts
 }
 
-// Entry in the manifest tracking installed skills
+// Entry in the manifest tracking installed commands
 export interface ManifestEntry {
   name: string;
   tool: string;
