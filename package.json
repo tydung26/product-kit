@@ -18,7 +18,7 @@
   },
   "files": [
     "dist/",
-    "skills/",
+    "commands/",
     "bin/",
     "README.md"
   ],

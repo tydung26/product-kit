@@ -1,6 +1,6 @@
 # product-kit
 
-PM skills for Claude Code, Antigravity, and OpenCode AI assistants.
+PM commands for Claude Code, Antigravity, and OpenCode AI assistants.
 
 ## Install
 
@@ -11,17 +11,17 @@ npm install -g product-kit
 ## Usage
 
 ```bash
-pkit install              # Interactive: pick tool + skills
-pkit install --yes        # Install all skills to all tools
-pkit list                 # Show available/installed skills
-pkit update               # Update all installed skills
+pkit install              # Interactive: pick tool + commands
+pkit install --yes        # Install all commands to all tools
+pkit list                 # Show available/installed commands
+pkit update               # Update all installed commands
 pkit remove pkit:brainstorm
 pkit config               # View configuration
 pkit config set toolPaths.antigravity /custom/path
 pkit doctor               # Diagnose installation issues
 ```
 
-## Skills
+## Commands
 
 | Slash Command | Purpose |
 |---|---|
@@ -34,8 +34,8 @@ pkit doctor               # Diagnose installation issues
 
 | Tool | Global path |
 |---|---|
-| Claude Code + OpenCode | `~/.claude/skills/` |
-| Antigravity | `~/.gemini/antigravity/skills/` |
+| Claude Code + OpenCode | `~/.claude/commands/pkit/` |
+| Antigravity | `~/.gemini/antigravity/commands/pkit/` |
 
 ## License
 
