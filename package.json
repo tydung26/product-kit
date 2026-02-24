@@ -1,6 +1,6 @@
 {
   "name": "@tydung26/product-kit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "🧠 Product management skills kit",
   "bin": {
     "pkit": "bin/pkit.js"
