@@ -5,14 +5,14 @@ PM commands for Claude Code, Antigravity, and OpenCode AI assistants.
 ## Install
 
 ```bash
-npm install -g product-kit
+npm install -g @tydung26/product-kit
 ```
 
 ## Usage
 
 ```bash
-pkit install              # Interactive: pick tool + commands
-pkit install --yes        # Install all commands to all tools
+pkit init              # Interactive: pick tool + commands
+pkit init --yes        # Install all commands to all tools
 pkit list                 # Show available/installed commands
 pkit update               # Update all installed commands
 pkit remove pkit:brainstorm

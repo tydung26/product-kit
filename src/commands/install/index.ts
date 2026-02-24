@@ -14,7 +14,7 @@ interface InstallOpts {
 
 export function registerInstall(cli: CAC) {
   cli
-    .command('install [...skills]', 'Install PM skills to AI coding tools')
+    .command('init [...skills]', 'Install PM commands to AI coding tools')
     .option('--tool <tool>', 'Target tool: claude, antigravity, opencode, all')
     .option('--scope <scope>', 'Scope: global or project', { default: 'global' })
     .option('--force', 'Overwrite existing installations')
