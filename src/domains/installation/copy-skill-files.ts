@@ -7,31 +7,34 @@ export type CopyResult =
   | { status: 'skipped'; reason: string }
   | { status: 'failed'; error: string };
 
-// Safely copies a skill directory to destBase/skillName.
+// Safely copies a single command .md file to destBase/filename.md.
 // Validates paths to prevent directory traversal attacks.
-export async function copySkillDir(
-  srcDir: string,
+export async function copyCommandFile(
+  srcFile: string,
   destBase: string,
   force: boolean,
 ): Promise<CopyResult> {
-  const skillName = basename(srcDir);
+  const filename = basename(srcFile);
 
   // Path traversal guard: resolved dest must be inside destBase
-  const destSkillDir = join(destBase, skillName);
-  if (!resolve(destSkillDir).startsWith(resolve(destBase))) {
-    return { status: 'failed', error: `Path traversal attempt blocked for: ${skillName}` };
+  const destFile = join(destBase, filename);
+  if (!resolve(destFile).startsWith(resolve(destBase))) {
+    return { status: 'failed', error: `Path traversal attempt blocked for: ${filename}` };
   }
 
-  if (existsSync(destSkillDir) && !force) {
+  if (existsSync(destFile) && !force) {
     return { status: 'skipped', reason: 'already installed (use --force to overwrite)' };
   }
 
   try {
     await ensureDir(destBase);
-    if (existsSync(destSkillDir) && force) await remove(destSkillDir);
-    await copy(srcDir, destSkillDir, { overwrite: force });
-    return { status: 'installed', destPath: destSkillDir };
+    if (existsSync(destFile) && force) await remove(destFile);
+    await copy(srcFile, destFile, { overwrite: force });
+    return { status: 'installed', destPath: destFile };
   } catch (err) {
     return { status: 'failed', error: err instanceof Error ? err.message : String(err) };
   }
 }
+
+// Legacy alias for any callers using the old name
+export const copySkillDir = copyCommandFile;

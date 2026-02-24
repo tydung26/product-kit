@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { loadAvailableSkills } from '../skills';
 import { resolveTargetPaths } from './resolve-paths';
-import { copySkillDir } from './copy-skill-files';
+import { copyCommandFile } from './copy-skill-files';
 import { addManifestEntry, removeManifestEntries, getManifestEntries } from './manifest-manager';
 import { log } from '../../shared/logger';
 import type { InstallOptions } from '../../types';
@@ -32,7 +32,7 @@ export async function installSkills(names: string[], opts: InstallOptions): Prom
 
   for (const skill of toInstall) {
     for (const destBase of destPaths) {
-      const result = await copySkillDir(skill.dirPath, destBase, opts.force ?? false);
+      const result = await copyCommandFile(skill.filePath, destBase, opts.force ?? false);
       if (result.status === 'installed') {
         log.success(`Installed: ${skill.name} → ${result.destPath}`);
         addManifestEntry({
