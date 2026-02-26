@@ -2,6 +2,7 @@ import { createCli } from './cli/setup';
 import { registerInstall } from './commands/install';
 import { registerList } from './commands/list';
 import { registerUpdate } from './commands/update';
+import { registerAdd } from './commands/add';
 import { registerRemove } from './commands/remove';
 import { registerConfig } from './commands/config';
 import { registerDoctor } from './commands/doctor';
@@ -9,6 +10,7 @@ import { registerDoctor } from './commands/doctor';
 const cli = createCli();
 
 registerInstall(cli);
+registerAdd(cli);
 registerList(cli);
 registerUpdate(cli);
 registerRemove(cli);

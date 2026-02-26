@@ -5,7 +5,8 @@ import { log } from '../../shared/logger';
 
 export function registerList(cli: CAC) {
   cli
-    .command('list|ls', 'List available and installed PM skills')
+    .command('list', 'List available and installed PM skills')
+    .alias('ls')
     .action(() => {
       const available = loadAvailableSkills();
       const installed = new Set(getManifestEntries().map(e => e.name));

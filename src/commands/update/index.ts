@@ -8,7 +8,8 @@ interface UpdateOpts { tool?: ToolName; scope: InstallScope; }
 
 export function registerUpdate(cli: CAC) {
   cli
-    .command('update|u [...skills]', 'Update installed PM skills to latest version')
+    .command('update [...skills]', 'Update installed PM skills to latest version')
+    .alias('u')
     .option('--tool <tool>', 'Target tool: claude, antigravity, opencode, all')
     .option('--scope <scope>', 'Scope: global or project', { default: 'global' })
     .action(async (skills: string[], opts: UpdateOpts) => {

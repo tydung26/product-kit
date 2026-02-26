@@ -7,7 +7,8 @@ interface RemoveOpts { yes?: boolean; all?: boolean; }
 
 export function registerRemove(cli: CAC) {
   cli
-    .command('remove|rm [...skills]', 'Remove installed PM skills')
+    .command('remove [...skills]', 'Remove installed PM skills')
+    .alias('rm')
     .option('-y, --yes', 'Skip confirmation prompt')
     .option('-a, --all', 'Remove all installed pkit skills')
     .action(async (skills: string[], opts: RemoveOpts) => {
