@@ -53,6 +53,6 @@ export function registerInstall(cli: CAC) {
         yes: opts.yes,
       });
 
-      outro('Done! Use /pkit:brainstorm (or other skill names) in your AI tool.');
+      outro('Done! Use /pkit:discover (or other skill names) in your AI tool.');
     });
 }
