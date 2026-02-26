@@ -20,7 +20,7 @@ CLI tool (`pkit`) that installs product-engineering skill files (SKILL.md) into 
 
 - **`commands/`** — CAC CLI command handlers (init, add, list, update, remove, doctor). Each registers via `registerX(cli: CAC)` pattern, wired in `index.ts`.
 - **`domains/skills/`** — Loads skills from `skills/` package directory. Each skill is a directory containing `SKILL.md` with YAML frontmatter (`name`, `description`).
-- **`domains/installation/`** — Core install/remove/update logic. `copySkillDir()` copies entire skill directories (not individual files). `scanInstalledSkills()` checks both global + project scopes. Manifest tracks installs in `~/.config/product-kit/manifest.json`.
+- **`domains/installation/`** — Core install/remove/update logic. `copySkillDir()` copies entire skill directories (not individual files). `scanInstalledSkills()` checks both global + project scopes, filtered to pkit-only directories. `safeCwd()` prevents EPERM crash. Manifest tracks installs in `~/.config/product-kit/manifest.json`.
 - **`domains/ui/prompts.ts`** — Interactive prompts via @clack/prompts (tool selection, skill picker, scope picker).
 - **`domains/config/`** — User config stored at `~/.config/product-kit/config.json`. Overridable tool paths.
 - **`shared/paths.ts`** — All path constants (package skills dir, config dir, default tool paths, project segments).
