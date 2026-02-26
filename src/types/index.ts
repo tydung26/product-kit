@@ -10,9 +10,9 @@ export interface SkillMeta {
   argumentHint?: string;
 }
 
-// A command found in the package's commands/pkit/ directory
+// A command found in the package's commands/skills/ directory
 export interface Skill {
-  name: string;       // e.g. "pkit:brainstorm" (derived from filename)
+  name: string;       // e.g. "pkit:discover" (derived from directory name)
   filePath: string;   // absolute path to the .md file
   meta: SkillMeta;
 }
