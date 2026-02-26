@@ -8,30 +8,30 @@ const { resolveTargetPaths } = await import('../dist/domains/installation/resolv
 
 const home = homedir();
 
-test('claude + global → ~/.claude/commands/pkit', () => {
+test('claude + global → ~/.claude/skills', () => {
   const paths = resolveTargetPaths('claude', 'global');
-  assert.deepEqual(paths, [join(home, '.claude', 'commands', 'pkit')]);
+  assert.deepEqual(paths, [join(home, '.claude', 'skills')]);
 });
 
-test('antigravity + global → ~/.gemini/antigravity/commands/pkit', () => {
+test('antigravity + global → ~/.gemini/antigravity/skills', () => {
   const paths = resolveTargetPaths('antigravity', 'global');
-  assert.deepEqual(paths, [join(home, '.gemini', 'antigravity', 'commands', 'pkit')]);
+  assert.deepEqual(paths, [join(home, '.gemini', 'antigravity', 'skills')]);
 });
 
 test('all + global → claude + antigravity (no duplicates)', () => {
   const paths = resolveTargetPaths('all', 'global');
   assert.equal(paths.length, 2);
-  assert.ok(paths.includes(join(home, '.claude', 'commands', 'pkit')));
-  assert.ok(paths.includes(join(home, '.gemini', 'antigravity', 'commands', 'pkit')));
+  assert.ok(paths.includes(join(home, '.claude', 'skills')));
+  assert.ok(paths.includes(join(home, '.gemini', 'antigravity', 'skills')));
 });
 
-test('opencode + global → ~/.claude/commands/pkit (shared path)', () => {
+test('opencode + global → ~/.claude/skills (shared path)', () => {
   const paths = resolveTargetPaths('opencode', 'global');
-  assert.deepEqual(paths, [join(home, '.claude', 'commands', 'pkit')]);
+  assert.deepEqual(paths, [join(home, '.claude', 'skills')]);
 });
 
-test('claude + project → .claude/commands/pkit in cwd', () => {
+test('claude + project → .claude/skills in cwd', () => {
   const paths = resolveTargetPaths('claude', 'project');
-  assert.ok(paths[0].endsWith(join('.claude', 'commands', 'pkit')));
+  assert.ok(paths[0].endsWith(join('.claude', 'skills')));
   assert.ok(paths[0].startsWith(process.cwd()));
 });
