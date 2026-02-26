@@ -4,7 +4,7 @@ import { registerList } from './commands/list';
 import { registerUpdate } from './commands/update';
 import { registerAdd } from './commands/add';
 import { registerRemove } from './commands/remove';
-import { registerConfig } from './commands/config';
+
 import { registerDoctor } from './commands/doctor';
 
 const cli = createCli();
@@ -14,7 +14,7 @@ registerAdd(cli);
 registerList(cli);
 registerUpdate(cli);
 registerRemove(cli);
-registerConfig(cli);
+
 registerDoctor(cli);
 
 // Show help if no command given

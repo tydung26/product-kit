@@ -1,27 +1,41 @@
 # product-kit
 
-PM commands for Claude Code, Antigravity, and OpenCode AI assistants.
+Product engineer skills kit for Claude Code, Antigravity, and OpenCode AI assistants.
 
 ## Install
 
 ```bash
+# pnpm
+pnpm add -g @tydung26/product-kit
+
+# npm
 npm install -g @tydung26/product-kit
 ```
 
 ## Usage
 
 ```bash
-pkit init              # Interactive: pick tool + commands
-pkit init --yes        # Install all commands to all tools
-pkit list                 # Show available/installed commands
-pkit update               # Update all installed commands
-pkit remove pkit:discover
-pkit config               # View configuration
-pkit config set toolPaths.antigravity /custom/path
-pkit doctor               # Diagnose installation issues
+# Setup
+pkit init                  # Interactive: pick tool → skills → scope
+pkit init --yes            # Install all skills to claude (global)
+pkit i                     # Alias for init
+
+# Add skills (skip full init)
+pkit add                   # Interactive: pick scope → skills
+pkit add pkit:discover     # Add specific skill (prompts for scope)
+pkit add pkit:discover --scope global --tool claude
+
+# Manage
+pkit list                  # Show available/installed skills
+pkit ls                    # Alias for list
+pkit update                # Update all installed skills (both scopes)
+pkit u                     # Alias for update
+pkit remove pkit:discover  # Remove specific skill (both scopes)
+pkit rm --all              # Remove all installed skills
+pkit doctor                # Diagnose installation issues
 ```
 
-## Commands
+## Skills
 
 | Slash Command          | Purpose                                                            |
 | ---------------------- | ------------------------------------------------------------------ |
@@ -32,10 +46,10 @@ pkit doctor               # Diagnose installation issues
 
 ## Install Paths
 
-| Tool                   | Global path                     |
-| ---------------------- | ------------------------------- |
-| Claude Code + OpenCode | `~/.claude/skills/`             |
-| Antigravity            | `~/.gemini/antigravity/skills/` |
+| Tool                   | Global                          | Project                |
+| ---------------------- | ------------------------------- | ---------------------- |
+| Claude Code + OpenCode | `~/.claude/skills/<skill>/`     | `.claude/skills/<skill>/` |
+| Antigravity            | `~/.gemini/antigravity/skills/<skill>/` | `.agent/skills/<skill>/` |
 
 ## License
 

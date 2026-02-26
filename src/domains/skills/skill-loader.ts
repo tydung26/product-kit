@@ -25,7 +25,8 @@ export function loadAvailableSkills(): Skill[] {
     try {
       const content = readFileSync(filePath, 'utf8');
       const meta = validateSkillContent(content, filePath);
-      skills.push({ name: dirNameToCommandName(entry.name), filePath, meta });
+      const dirPath = join(PACKAGE_COMMANDS_DIR, entry.name);
+      skills.push({ name: dirNameToCommandName(entry.name), filePath, dirPath, dirName: entry.name, meta });
     } catch {
       // Skip invalid skill files silently in production
     }

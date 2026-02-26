@@ -1,5 +1,5 @@
 import type { CAC } from 'cac';
-import { getManifestEntries, updateSkills } from '../../domains/installation';
+import { updateSkills, scanInstalledSkills } from '../../domains/installation';
 import { intro, outro } from '../../domains/ui/prompts';
 import { log } from '../../shared/logger';
 import type { ToolName, InstallScope } from '../../types';
@@ -15,10 +15,10 @@ export function registerUpdate(cli: CAC) {
     .action(async (skills: string[], opts: UpdateOpts) => {
       intro('pkit — updating skills');
 
-      // Default: update all installed skills
+      // Default: update all installed skills found in both scopes
       const toUpdate = skills.length
         ? skills
-        : [...new Set(getManifestEntries().map(e => e.name))];
+        : scanInstalledSkills();
 
       if (toUpdate.length === 0) {
         log.warn('No skills installed. Run: pkit install');

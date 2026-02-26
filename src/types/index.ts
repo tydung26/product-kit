@@ -13,7 +13,9 @@ export interface SkillMeta {
 // A command found in the package's commands/skills/ directory
 export interface Skill {
   name: string;       // e.g. "pkit:discover" (derived from directory name)
-  filePath: string;   // absolute path to the .md file
+  filePath: string;   // absolute path to the SKILL.md file
+  dirPath: string;    // absolute path to the skill directory (e.g. skills/discover/)
+  dirName: string;    // directory name (e.g. "discover")
   meta: SkillMeta;
 }
 

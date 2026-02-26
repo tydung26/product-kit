@@ -1,10 +1,11 @@
-import { readFileSync } from 'fs';
+import { readFileSync, readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { loadAvailableSkills } from '../skills';
 import { resolveTargetPaths } from './resolve-paths';
-import { copyCommandFile } from './copy-skill-files';
+import { copySkillDir } from './copy-skill-files';
 import { addManifestEntry, removeManifestEntries, getManifestEntries } from './manifest-manager';
 import { log } from '../../shared/logger';
+import { DEFAULT_TOOL_PATHS, PROJECT_TOOL_SEGMENTS } from '../../shared/paths';
 import type { InstallOptions, ToolName } from '../../types';
 
 // Read current package version for manifest tracking
@@ -32,7 +33,7 @@ export async function installSkills(names: string[], opts: InstallOptions): Prom
 
   for (const skill of toInstall) {
     for (const destBase of destPaths) {
-      const result = await copyCommandFile(skill.filePath, destBase, opts.force ?? false);
+      const result = await copySkillDir(skill.dirPath, skill.dirName, destBase, opts.force ?? false);
       if (result.status === 'installed') {
         log.success(`Installed: ${skill.name} → ${result.destPath}`);
         addManifestEntry({
@@ -51,23 +52,41 @@ export async function installSkills(names: string[], opts: InstallOptions): Prom
   }
 }
 
-// Remove skills by name, deleting files from all recorded install paths
+// Remove skills by name from both manifest and actual directories on disk.
+// Scans global + project scopes so skills installed outside manifest are also removed.
 export async function removeSkills(names: string[]): Promise<void> {
   const { remove } = await import('fs-extra');
+
+  const allDirs = [
+    DEFAULT_TOOL_PATHS.claude,
+    DEFAULT_TOOL_PATHS.antigravity,
+    join(process.cwd(), PROJECT_TOOL_SEGMENTS.claude),
+    join(process.cwd(), PROJECT_TOOL_SEGMENTS.antigravity),
+  ];
+
   for (const name of names) {
-    const removed = removeManifestEntries(name);
-    if (removed.length === 0) {
-      log.warn(`Not installed: ${name}`);
-      continue;
-    }
-    for (const entry of removed) {
-      try {
-        await remove(entry.destPath);
-        log.success(`Removed: ${name} from ${entry.destPath}`);
-      } catch (err) {
-        log.error(`Failed to remove ${entry.destPath}: ${err instanceof Error ? err.message : String(err)}`);
+    // Strip "pkit:" prefix to get directory name
+    const dirName = name.replace(/^pkit:/, '');
+    let removed = false;
+
+    // Remove from manifest
+    removeManifestEntries(name);
+
+    // Remove actual directories from all scopes
+    for (const base of allDirs) {
+      const skillDir = join(base, dirName);
+      if (existsSync(skillDir)) {
+        try {
+          await remove(skillDir);
+          log.success(`Removed: ${name} from ${skillDir}`);
+          removed = true;
+        } catch (err) {
+          log.error(`Failed to remove ${skillDir}: ${err instanceof Error ? err.message : String(err)}`);
+        }
       }
     }
+
+    if (!removed) log.warn(`Not installed: ${name}`);
   }
 }
 
@@ -102,6 +121,31 @@ export async function updateSkills(names: string[], opts: InstallOptions & { too
       force: true,
     });
   }
+}
+
+// Scan both global and project scope directories for installed pkit skills.
+// Returns deduplicated list of skill command names (e.g. "pkit:discover").
+export function scanInstalledSkills(): string[] {
+  const dirs = [
+    DEFAULT_TOOL_PATHS.claude,
+    DEFAULT_TOOL_PATHS.antigravity,
+    join(process.cwd(), PROJECT_TOOL_SEGMENTS.claude),
+    join(process.cwd(), PROJECT_TOOL_SEGMENTS.antigravity),
+  ];
+
+  const found = new Set<string>();
+  for (const base of dirs) {
+    if (!existsSync(base)) continue;
+    try {
+      for (const entry of readdirSync(base, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        if (existsSync(join(base, entry.name, 'SKILL.md'))) {
+          found.add(`pkit:${entry.name}`);
+        }
+      }
+    } catch { /* skip unreadable dirs */ }
+  }
+  return [...found];
 }
 
 export { getManifestEntries };
