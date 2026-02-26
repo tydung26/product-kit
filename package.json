@@ -10,7 +10,7 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "lint": "tsc --noEmit",
-    "test": "node --test tests/*.test.mjs",
+    "test": "vitest run",
     "prepublishOnly": "npm run lint && npm run build && npm test"
   },
   "engines": {
@@ -45,6 +45,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.3.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   }
 }

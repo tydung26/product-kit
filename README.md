@@ -5,6 +5,8 @@ PM commands for Claude Code, Antigravity, and OpenCode AI assistants.
 ## Install
 
 ```bash
+pnpm add -g @tydung26/product-kit
+# or
 npm install -g @tydung26/product-kit
 ```
 

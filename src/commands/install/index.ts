@@ -1,39 +1,38 @@
 import type { CAC } from 'cac';
 import { loadAvailableSkills } from '../../domains/skills';
 import { installSkills } from '../../domains/installation';
-import { promptToolSelection, promptSkillSelection, intro, outro } from '../../domains/ui/prompts';
-import { log } from '../../shared/logger';
+import { promptToolSelection, promptSkillSelection, promptScopeSelection, intro, outro } from '../../domains/ui/prompts';
 import type { ToolName, InstallScope } from '../../types';
 
 interface InstallOpts {
   tool?: ToolName;
-  scope: InstallScope;
+  scope?: InstallScope;
   force?: boolean;
   yes?: boolean;
 }
 
 export function registerInstall(cli: CAC) {
   cli
-    .command('init [...skills]', 'Install PM commands to AI coding tools')
+    .command('init|i [...skills]', 'Install PM commands to AI coding tools')
     .option('--tool <tool>', 'Target tool: claude, antigravity, opencode, all')
-    .option('--scope <scope>', 'Scope: global or project', { default: 'global' })
+    .option('--scope <scope>', 'Scope: global or project')
     .option('--force', 'Overwrite existing installations')
-    .option('-y, --yes', 'Skip interactive prompts (installs all skills to all tools)')
+    .option('-y, --yes', 'Skip interactive prompts (installs all skills to claude, global)')
     .action(async (skills: string[], opts: InstallOpts) => {
       intro('pkit — PM skills installer');
 
-      // Resolve tool: use flag, non-interactive default, or prompt
+      // Step 1: Which AI tool?
       let tool = opts.tool;
       if (!tool) {
         if (opts.yes) {
-          tool = 'all';
+          tool = 'claude';
         } else {
           tool = await promptToolSelection() ?? undefined;
           if (!tool) return;
         }
       }
 
-      // Resolve skill names: use args, or prompt, or all (with -y)
+      // Step 2: Which skills?
       let skillNames = skills;
       if (skillNames.length === 0) {
         const available = loadAvailableSkills().map(s => s.name);
@@ -46,9 +45,20 @@ export function registerInstall(cli: CAC) {
         }
       }
 
+      // Step 3: Global or project scope?
+      let scope = opts.scope;
+      if (!scope) {
+        if (opts.yes) {
+          scope = 'global';
+        } else {
+          scope = await promptScopeSelection() ?? undefined;
+          if (!scope) return;
+        }
+      }
+
       await installSkills(skillNames, {
         tools: tool as ToolName,
-        scope: opts.scope as InstallScope,
+        scope: scope as InstallScope,
         force: opts.force,
         yes: opts.yes,
       });

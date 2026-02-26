@@ -3,17 +3,24 @@ import { removeSkills, getManifestEntries } from '../../domains/installation';
 import { promptConfirm, promptSkillSelection, intro, outro } from '../../domains/ui/prompts';
 import { log } from '../../shared/logger';
 
-interface RemoveOpts { yes?: boolean; }
+interface RemoveOpts { yes?: boolean; all?: boolean; }
 
 export function registerRemove(cli: CAC) {
   cli
-    .command('remove [...skills]', 'Remove installed PM skills')
+    .command('remove|rm [...skills]', 'Remove installed PM skills')
     .option('-y, --yes', 'Skip confirmation prompt')
+    .option('-a, --all', 'Remove all installed pkit skills')
     .action(async (skills: string[], opts: RemoveOpts) => {
       intro('pkit — removing skills');
 
-      // If no skills named, prompt to pick from installed
       let toRemove = skills;
+
+      // --all flag: remove everything installed
+      if (opts.all) {
+        toRemove = [...new Set(getManifestEntries().map(e => e.name))];
+      }
+
+      // If no skills named, prompt to pick from installed
       if (toRemove.length === 0) {
         const installedNames = [...new Set(getManifestEntries().map(e => e.name))];
         if (installedNames.length === 0) {
