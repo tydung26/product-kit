@@ -2,14 +2,15 @@ import { describe, it, expect } from 'vitest';
 import { loadAvailableSkills, findSkillByName } from '../dist/domains/skills/index.js';
 
 describe('loadAvailableSkills', () => {
-  it('loads all 4 pkit commands', () => {
+  it('loads all 5 pkit commands', () => {
     const skills = loadAvailableSkills();
-    expect(skills.length).toBe(4);
+    expect(skills.length).toBe(5);
     const names = skills.map(s => s.name);
     expect(names).toContain('pkit:discover');
     expect(names).toContain('pkit:market-intel');
     expect(names).toContain('pkit:roadmap');
     expect(names).toContain('pkit:product-design');
+    expect(names).toContain('pkit:naming');
   });
 
   it('each skill has a non-empty description in meta', () => {
