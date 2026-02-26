@@ -5,10 +5,6 @@ Product engineer skills kit for Claude Code, Antigravity, and OpenCode AI assist
 ## Install
 
 ```bash
-# pnpm
-pnpm add -g @tydung26/product-kit
-
-# npm
 npm install -g @tydung26/product-kit
 ```
 
@@ -46,10 +42,10 @@ pkit doctor                # Diagnose installation issues
 
 ## Install Paths
 
-| Tool                   | Global                          | Project                |
-| ---------------------- | ------------------------------- | ---------------------- |
-| Claude Code + OpenCode | `~/.claude/skills/<skill>/`     | `.claude/skills/<skill>/` |
-| Antigravity            | `~/.gemini/antigravity/skills/<skill>/` | `.agent/skills/<skill>/` |
+| Tool                   | Global                                  | Project                   |
+| ---------------------- | --------------------------------------- | ------------------------- |
+| Claude Code + OpenCode | `~/.claude/skills/<skill>/`             | `.claude/skills/<skill>/` |
+| Antigravity            | `~/.gemini/antigravity/skills/<skill>/` | `.agent/skills/<skill>/`  |
 
 ## License
 
