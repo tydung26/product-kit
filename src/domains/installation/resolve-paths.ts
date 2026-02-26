@@ -1,13 +1,20 @@
 import { join } from 'path';
+import { homedir } from 'os';
 import { PROJECT_TOOL_SEGMENTS } from '../../shared/paths';
 import { getConfig } from '../config';
 import type { ToolName, InstallScope } from '../../types';
+
+// Safe CWD getter — falls back to home when CWD is unavailable (deleted directory)
+function safeCwd(): string {
+  try { return process.cwd(); }
+  catch { return homedir(); }
+}
 
 // Returns the list of destination base directories for a given tool + scope combo.
 // "all" expands to claude + antigravity (opencode shares the claude path).
 export function resolveTargetPaths(tool: ToolName, scope: InstallScope): string[] {
   const config = getConfig();
-  const cwd = process.cwd();
+  const cwd = safeCwd();
 
   if (scope === 'global') {
     if (tool === 'claude') return [config.toolPaths.claude];

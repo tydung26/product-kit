@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync, existsSync } from 'fs';
 import { join } from 'path';
+import { homedir } from 'os';
 import { loadAvailableSkills } from '../skills';
 import { resolveTargetPaths } from './resolve-paths';
 import { copySkillDir } from './copy-skill-files';
@@ -7,6 +8,12 @@ import { addManifestEntry, removeManifestEntries, getManifestEntries } from './m
 import { log } from '../../shared/logger';
 import { DEFAULT_TOOL_PATHS, PROJECT_TOOL_SEGMENTS } from '../../shared/paths';
 import type { InstallOptions, ToolName } from '../../types';
+
+// Safe CWD getter — falls back to home when CWD is unavailable (deleted directory)
+function safeCwd(): string {
+  try { return process.cwd(); }
+  catch { return homedir(); }
+}
 
 // Read current package version for manifest tracking
 function getPkgVersion(): string {
@@ -60,8 +67,8 @@ export async function removeSkills(names: string[]): Promise<void> {
   const allDirs = [
     DEFAULT_TOOL_PATHS.claude,
     DEFAULT_TOOL_PATHS.antigravity,
-    join(process.cwd(), PROJECT_TOOL_SEGMENTS.claude),
-    join(process.cwd(), PROJECT_TOOL_SEGMENTS.antigravity),
+    join(safeCwd(), PROJECT_TOOL_SEGMENTS.claude),
+    join(safeCwd(), PROJECT_TOOL_SEGMENTS.antigravity),
   ];
 
   for (const name of names) {
@@ -124,13 +131,15 @@ export async function updateSkills(names: string[], opts: InstallOptions & { too
 }
 
 // Scan both global and project scope directories for installed pkit skills.
-// Returns deduplicated list of skill command names (e.g. "pkit:discover").
+// Only matches directories whose names are known pkit skills (not other tools' skills).
 export function scanInstalledSkills(): string[] {
+  const pkitDirNames = new Set(loadAvailableSkills().map(s => s.dirName));
+
   const dirs = [
     DEFAULT_TOOL_PATHS.claude,
     DEFAULT_TOOL_PATHS.antigravity,
-    join(process.cwd(), PROJECT_TOOL_SEGMENTS.claude),
-    join(process.cwd(), PROJECT_TOOL_SEGMENTS.antigravity),
+    join(safeCwd(), PROJECT_TOOL_SEGMENTS.claude),
+    join(safeCwd(), PROJECT_TOOL_SEGMENTS.antigravity),
   ];
 
   const found = new Set<string>();
@@ -139,7 +148,7 @@ export function scanInstalledSkills(): string[] {
     try {
       for (const entry of readdirSync(base, { withFileTypes: true })) {
         if (!entry.isDirectory()) continue;
-        if (existsSync(join(base, entry.name, 'SKILL.md'))) {
+        if (pkitDirNames.has(entry.name)) {
           found.add(`pkit:${entry.name}`);
         }
       }
